@@ -26,7 +26,11 @@ internal static class Program
 
     private static void ApplicationConfiguration()
     {
-        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        // Not: Application.SetHighDpiMode(...) .NET Core WinForms'a (net5.0+) ozgudur ve
+        // klasik .NET Framework'te (net48) mevcut degildir. Framework'te yuksek DPI
+        // farkindaligi bunun yerine App.config icindeki
+        // <System.Windows.Forms.ApplicationConfigurationSection> ile ayarlanir
+        // (bkz. App.config).
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
     }

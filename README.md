@@ -1,7 +1,11 @@
 # Excel Unprotector
 
+**Coder:** SerdarMSC — [github.com/SerdarMSC](https://github.com/SerdarMSC/) · serdarmsc@gmail.com
+
 Excel `.xlsx` / `.xlsm` / `.xltx` / `.xltm` dosyalarındaki **çalışma kitabı (yapı) koruması**
-ve **sayfa korumalarını** kaldıran, C# (.NET 8, WinForms) ile yazılmış bir masaüstü aracı.
+ve **sayfa korumalarını** kaldıran, C# (.NET Framework 4.8, WinForms) ile yazılmış bir masaüstü
+aracı. .NET Framework 4.8 bilinçli olarak seçildi: Windows 10/11'e zaten gömülü geldiğinden,
+çalıştırmak için ekstra bir "runtime" kurulumu gerekmez — tek bir küçük `.exe` yeterlidir.
 
 Bu araç, Excel dosyalarının aslında bir ZIP paketi (OOXML) olduğu ve korumaların paket içindeki
 XML parçalarında (`xl/workbook.xml`, `xl/worksheets/sheetN.xml`) saklandığı gerçeğine dayanır.
@@ -37,8 +41,8 @@ ExcelUnprotector/
     └── ConsoleRunner.cs         # Komut satırı / toplu iş modu
 ```
 
-Harici bir NuGet paketine ihtiyaç yoktur — yalnızca .NET'in kendi `System.IO.Compression` ve
-`System.Text.RegularExpressions` kütüphaneleri kullanılır.
+Harici bir NuGet paketine ihtiyaç yoktur — yalnızca .NET Framework'ün kendi
+`System.IO.Compression` ve `System.Text.RegularExpressions` kütüphaneleri kullanılır.
 
 ## GitHub Actions ile otomatik derleme
 
@@ -55,31 +59,22 @@ kendi bilgisayarınızda .NET SDK kurulu olmasına gerek kalmadan projeyi derler
 
 **Derlenen .exe'yi indirme:**
 
-Her çalıştırma **iki farklı çıktı** üretir; ihtiyacınıza göre birini seçin:
-
-| Artifact / Release dosyası | Boyut | Gereksinim |
-|---|---|---|
-| `ExcelUnprotector-win-x64-slim` (`ExcelUnprotector-slim.exe`) | ~birkaç yüz KB | Hedef makinede **[.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)** kurulu olmalı (yoksa Windows ilk açılışta otomatik kurulum sayfasına yönlendirir) |
-| `ExcelUnprotector-win-x64-portable` (`ExcelUnprotector-portable.exe`) | ~60–100 MB | Hiçbir kurulum gerektirmez, tek başına çalışır (.NET çalışma zamanı exe'nin içine gömülü) |
-
-Çoğu güncel Windows 10/11 makinesinde .NET Desktop Runtime zaten kurulu ya da Windows Update
-üzerinden kolayca kurulabilir olduğundan, günlük kullanım için **`slim`** sürümünü önerir;
-başka bir bilgisayara USB ile taşımak gibi "kur gerektirmesin" senaryolarında **`portable`**
-sürümünü kullanın.
-
-- Her çalıştırmanın sonunda, o çalıştırmanın sayfasındaki **Artifacts** bölümünden ikisini de
-  indirebilirsiniz.
+- Her çalıştırmanın sonunda, o çalıştırmanın sayfasındaki **Artifacts** bölümünden
+  `ExcelUnprotector-net48` adlı .zip'i indirebilirsiniz; içinde tek başına, ekstra kurulum
+  gerektirmeden çalışan `ExcelUnprotector.exe` bulunur (birkaç yüz KB).
 - Kalıcı bir sürüm yayınlamak isterseniz bir etiket (tag) push edin:
   ```bash
   git tag v1.0.0
   git push origin v1.0.0
   ```
-  Bu durumda iş akışı her iki `.exe`'yi de doğrudan bir **GitHub Release**'e ekler; böylece
-  indirme linki depo → **Releases** sayfasında kalıcı olarak durur.
+  Bu durumda iş akışı `.exe`'yi doğrudan bir **GitHub Release**'e ekler; böylece indirme linki
+  depo → **Releases** sayfasında kalıcı olarak durur.
 
-**İş akışının yaptıkları:** `dotnet restore` → `dotnet build -c Release` (derleme hatalarını
-erken yakalamak için) → iki ayrı `dotnet publish` çağrısı ile hem küçük (framework-dependent)
-hem de taşınabilir (self-contained + sıkıştırılmış tek dosya) `.exe` üretir.
+**İş akışının yaptıkları:** `dotnet restore` → `dotnet build -c Release` → derlenen
+`ExcelUnprotector.exe`'yi artifact/Release olarak yükler. .NET Framework derlemeleri tamamen
+framework-dependent (işletim sistemine gömülü GAC derlemelerini kullanır) olduğundan ayrı bir
+"publish" veya self-contained adımına gerek yoktur — `dotnet build`'in ürettiği `.exe` doğrudan
+dağıtılabilir durumdadır.
 
 > Durum rozetini kendi reponuza eklemek isterseniz, README'nizin en üstüne şunu koyup
 > `OWNER/REPO` kısmını kendi kullanıcı adınız/depo adınızla değiştirin:
@@ -87,8 +82,10 @@ hem de taşınabilir (self-contained + sıkıştırılmış tek dosya) `.exe` ü
 
 ## Derleme ve çalıştırma (yerelde)
 
-Gereksinim: Windows üzerinde **.NET 8 SDK** (ya da Visual Studio 2022, "Windows Forms uygulama
-geliştirme" iş yükü ile).
+Gereksinim: Windows üzerinde **.NET SDK** (proje `net48`'i hedeflese de, derlemek için modern
+`dotnet` CLI aracı kullanılır — SDK bunu bulur ve .NET Framework 4.8 targeting pack'iyle derler)
+ya da Visual Studio 2022 ("Windows Forms uygulama geliştirme" iş yükü ile; .NET Framework 4.8
+hedef paketinin de kurulu olduğundan emin olun).
 
 **Visual Studio ile:** `ExcelUnprotector.sln` dosyasını açın, F5 ile çalıştırın.
 
@@ -96,19 +93,18 @@ geliştirme" iş yükü ile).
 
 ```bash
 cd ExcelUnprotector
-dotnet build
-dotnet run --project ExcelUnprotector
+dotnet build -c Release
 ```
 
-Yayınlanabilir tek dosya `.exe` üretmek için:
+Derlenen `.exe`, `ExcelUnprotector/bin/Release/net48/ExcelUnprotector.exe` yolunda oluşur ve
+doğrudan çalıştırılabilir — ayrı bir "publish" adımına gerek yoktur.
 
-```bash
-dotnet publish ExcelUnprotector -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
-```
-
-> Farklı bir .NET sürümü kullanmak isterseniz `ExcelUnprotector.csproj` içindeki
-> `<TargetFramework>net8.0-windows</TargetFramework>` satırını örn. `net6.0-windows` ya da
-> (Windows Forms destekleyen) `net472` olarak değiştirebilirsiniz.
+> Farklı bir .NET Framework sürümü kullanmak isterseniz `ExcelUnprotector.csproj` içindeki
+> `<TargetFramework>net48</TargetFramework>` satırını örn. `net472` olarak değiştirebilirsiniz.
+> Modern .NET (Core) 5/6/8'e dönmek isterseniz aynı satırı `net8.0-windows` yapıp
+> `<Reference Include="System.IO.Compression" />` satırını kaldırmanız yeterli (o sürümlerde bu
+> kütüphane zaten örtük olarak referanslanır) — ancak bu durumda hedef makinede .NET Desktop
+> Runtime kurulu olması gerekir.
 
 ## Kullanım
 
@@ -144,3 +140,11 @@ Bu, dosyaları doğrudan `.exe` simgesinin üzerine sürükleyip bırakarak da t
 - VBA proje şifresi ve dosya açma şifresi yukarıda açıklandığı gibi kapsam dışıdır.
 - Bu araç yalnızca *kilit/koruma bayraklarını* kaldırır; şifreyi "kırmaz" veya çözmez — zaten
   Excel'in koruma mekanizması şifreyi saklamadığı için buna gerek de yoktur.
+
+## Hakkında
+
+**Coder:** SerdarMSC
+**GitHub:** [https://github.com/SerdarMSC/](https://github.com/SerdarMSC/)
+**E-posta:** serdarmsc@gmail.com
+
+Uygulama içinde de bu bilgilere **"Hakkında"** düğmesinden ulaşılabilir.
