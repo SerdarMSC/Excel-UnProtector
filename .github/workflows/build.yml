@@ -41,7 +41,23 @@ jobs:
       - name: Derle (Release)
         run: dotnet build "${{ env.PROJECT_PATH }}" --configuration Release --no-restore
 
-      - name: Tek dosya, kendi kendine yetebilen .exe olustur (publish)
+      # KUCUK CIKTI (onerilen): .NET calisma zamanini gomulmez, birkac yuz KB'dir.
+      # Calistiran makinede ".NET 8 Desktop Runtime" kurulu olmali; degilse Windows
+      # ilk calistirmada otomatik kurulum sayfasina yonlendirir.
+      - name: Kucuk .exe olustur - framework-dependent (Desktop Runtime gerektirir)
+        run: >
+          dotnet publish "${{ env.PROJECT_PATH }}"
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          -p:PublishSingleFile=true
+          --output publish-slim
+
+      # BUYUK CIKTI (taşınabilir): .NET calisma zamani exe'nin icine gomulur, hedef
+      # makinede hicbir sey kurulu olmasa da calisir. EnableCompressionInSingleFile
+      # boyutu onemli olcude kucultur (WinForms'ta trimming guvenli olmadigi icin
+      # kullanilmiyor).
+      - name: Tasinabilir .exe olustur - self-contained (kurulum gerektirmez)
         run: >
           dotnet publish "${{ env.PROJECT_PATH }}"
           --configuration Release
@@ -49,19 +65,36 @@ jobs:
           --self-contained true
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
-          --output publish
+          -p:EnableCompressionInSingleFile=true
+          --output publish-full
 
-      - name: Yayin ciktisini artifact olarak yukle
+      - name: Kucuk ciktiyi artifact olarak yukle
         uses: actions/upload-artifact@v4
         with:
-          name: ExcelUnprotector-win-x64
-          path: publish/ExcelUnprotector.exe
+          name: ExcelUnprotector-win-x64-slim
+          path: publish-slim/ExcelUnprotector.exe
           if-no-files-found: error
 
-      - name: Surum etiketiyse GitHub Release'e ekle
+      - name: Tasinabilir ciktiyi artifact olarak yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExcelUnprotector-win-x64-portable
+          path: publish-full/ExcelUnprotector.exe
+          if-no-files-found: error
+
+      - name: Surum etiketiyse dosyalari isimlendirerek hazirla
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          Copy-Item publish-slim/ExcelUnprotector.exe ExcelUnprotector-slim.exe
+          Copy-Item publish-full/ExcelUnprotector.exe ExcelUnprotector-portable.exe
+
+      - name: Isimlendirilmis dosyalari GitHub Release'e ekle
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: publish/ExcelUnprotector.exe
+          files: |
+            ExcelUnprotector-slim.exe
+            ExcelUnprotector-portable.exe
