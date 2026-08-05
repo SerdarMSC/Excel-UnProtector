@@ -57,20 +57,31 @@ kendi bilgisayarınızda .NET SDK kurulu olmasına gerek kalmadan projeyi derler
 
 **Derlenen .exe'yi indirme:**
 
-- Her çalıştırmanın sonunda, o çalıştırmanın sayfasındaki **Artifacts** bölümünden
-  `ExcelUnprotector-win-x64` adlı .zip'i indirebilirsiniz; içinde tek başına çalışabilen,
-  kendi kendine yeten (.NET kurulumu gerektirmeyen) `ExcelUnprotector.exe` bulunur.
+Her çalıştırma **iki farklı çıktı** üretir; ihtiyacınıza göre birini seçin:
+
+| Artifact / Release dosyası | Boyut | Gereksinim |
+|---|---|---|
+| `ExcelUnprotector-win-x64-slim` (`ExcelUnprotector-slim.exe`) | ~birkaç yüz KB | Hedef makinede **[.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)** kurulu olmalı (yoksa Windows ilk açılışta otomatik kurulum sayfasına yönlendirir) |
+| `ExcelUnprotector-win-x64-portable` (`ExcelUnprotector-portable.exe`) | ~60–100 MB | Hiçbir kurulum gerektirmez, tek başına çalışır (.NET çalışma zamanı exe'nin içine gömülü) |
+
+Çoğu güncel Windows 10/11 makinesinde .NET Desktop Runtime zaten kurulu ya da Windows Update
+üzerinden kolayca kurulabilir olduğundan, günlük kullanım için **`slim`** sürümünü önerir;
+başka bir bilgisayara USB ile taşımak gibi "kur gerektirmesin" senaryolarında **`portable`**
+sürümünü kullanın.
+
+- Her çalıştırmanın sonunda, o çalıştırmanın sayfasındaki **Artifacts** bölümünden ikisini de
+  indirebilirsiniz.
 - Kalıcı bir sürüm yayınlamak isterseniz bir etiket (tag) push edin:
   ```bash
   git tag v1.0.0
   git push origin v1.0.0
   ```
-  Bu durumda iş akışı ayrıca `ExcelUnprotector.exe` dosyasını doğrudan bir **GitHub Release**'e
-  ekler; böylece indirme linki depo → **Releases** sayfasında kalıcı olarak durur.
+  Bu durumda iş akışı her iki `.exe`'yi de doğrudan bir **GitHub Release**'e ekler; böylece
+  indirme linki depo → **Releases** sayfasında kalıcı olarak durur.
 
 **İş akışının yaptıkları:** `dotnet restore` → `dotnet build -c Release` (derleme hatalarını
-erken yakalamak için) → `dotnet publish` ile `win-x64` için self-contained, tek dosyalık bir
-`.exe` üretir (`-p:PublishSingleFile=true`).
+erken yakalamak için) → iki ayrı `dotnet publish` çağrısı ile hem küçük (framework-dependent)
+hem de taşınabilir (self-contained + sıkıştırılmış tek dosya) `.exe` üretir.
 
 > Durum rozetini kendi reponuza eklemek isterseniz, README'nizin en üstüne şunu koyup
 > `OWNER/REPO` kısmını kendi kullanıcı adınız/depo adınızla değiştirin:
@@ -135,3 +146,11 @@ Bu, dosyaları doğrudan `.exe` simgesinin üzerine sürükleyip bırakarak da t
 - VBA proje şifresi ve dosya açma şifresi yukarıda açıklandığı gibi kapsam dışıdır.
 - Bu araç yalnızca *kilit/koruma bayraklarını* kaldırır; şifreyi "kırmaz" veya çözmez — zaten
   Excel'in koruma mekanizması şifreyi saklamadığı için buna gerek de yoktur.
+
+## Hakkında
+
+**Coder:** SerdarMSC
+**GitHub:** [https://github.com/SerdarMSC/](https://github.com/SerdarMSC/)
+**E-posta:** serdarmsc@gmail.com
+
+Uygulama içinde de bu bilgilere **"Hakkında"** düğmesinden ulaşılabilir.
