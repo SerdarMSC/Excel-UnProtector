@@ -16,14 +16,15 @@ permissions:
   contents: write   # tag push'ta Release olusturup dosya eklemek icin gerekli
 
 env:
-  DOTNET_VERSION: "8.0.x"
   PROJECT_PATH: "ExcelUnprotector/ExcelUnprotector.csproj"
-  # WinForms icin derleme, calistirmayi test etmeyecegimiz icin sadece windows-latest gerekiyor.
+  BUILD_OUTPUT: "ExcelUnprotector/bin/Release/net48"
 
 jobs:
   build:
-    name: Build & Publish
-    # WinForms uygulamasi oldugundan Windows runner sart.
+    name: Build
+    # .NET Framework 4.8 hedeflendigi ve WinForms kullanildigi icin Windows runner sart.
+    # windows-latest imajinda .NET Framework 4.8 targeting pack ve gerekli MSBuild
+    # bilesenleri onceden kuruludur.
     runs-on: windows-latest
 
     steps:
@@ -33,7 +34,10 @@ jobs:
       - name: .NET SDK kur
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          # Derleme araci (dotnet CLI) icin bir SDK gerekiyor; hedef framework (net48)
+          # bundan bagimsizdir - SDK, net48 icin gerekli targeting pack'i makinede bulup
+          # kullanir.
+          dotnet-version: "8.0.x"
 
       - name: Bagimliliklari geri yukle (restore)
         run: dotnet restore "${{ env.PROJECT_PATH }}"
@@ -41,60 +45,27 @@ jobs:
       - name: Derle (Release)
         run: dotnet build "${{ env.PROJECT_PATH }}" --configuration Release --no-restore
 
-      # KUCUK CIKTI (onerilen): .NET calisma zamanini gomulmez, birkac yuz KB'dir.
-      # Calistiran makinede ".NET 8 Desktop Runtime" kurulu olmali; degilse Windows
-      # ilk calistirmada otomatik kurulum sayfasina yonlendirir.
-      - name: Kucuk .exe olustur - framework-dependent (Desktop Runtime gerektirir)
-        run: >
-          dotnet publish "${{ env.PROJECT_PATH }}"
-          --configuration Release
-          --runtime win-x64
-          --self-contained false
-          -p:PublishSingleFile=true
-          --output publish-slim
-
-      # BUYUK CIKTI (taşınabilir): .NET calisma zamani exe'nin icine gomulur, hedef
-      # makinede hicbir sey kurulu olmasa da calisir. EnableCompressionInSingleFile
-      # boyutu onemli olcude kucultur (WinForms'ta trimming guvenli olmadigi icin
-      # kullanilmiyor).
-      - name: Tasinabilir .exe olustur - self-contained (kurulum gerektirmez)
-        run: >
-          dotnet publish "${{ env.PROJECT_PATH }}"
-          --configuration Release
-          --runtime win-x64
-          --self-contained true
-          -p:PublishSingleFile=true
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          -p:EnableCompressionInSingleFile=true
-          --output publish-full
-
-      - name: Kucuk ciktiyi artifact olarak yukle
-        uses: actions/upload-artifact@v4
-        with:
-          name: ExcelUnprotector-win-x64-slim
-          path: publish-slim/ExcelUnprotector.exe
-          if-no-files-found: error
-
-      - name: Tasinabilir ciktiyi artifact olarak yukle
-        uses: actions/upload-artifact@v4
-        with:
-          name: ExcelUnprotector-win-x64-portable
-          path: publish-full/ExcelUnprotector.exe
-          if-no-files-found: error
-
-      - name: Surum etiketiyse dosyalari isimlendirerek hazirla
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Cikti dosyalarini listele (tanilama amacli)
         shell: pwsh
-        run: |
-          Copy-Item publish-slim/ExcelUnprotector.exe ExcelUnprotector-slim.exe
-          Copy-Item publish-full/ExcelUnprotector.exe ExcelUnprotector-portable.exe
+        run: Get-ChildItem "${{ env.BUILD_OUTPUT }}"
 
-      - name: Isimlendirilmis dosyalari GitHub Release'e ekle
+      - name: .exe'yi artifact olarak yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExcelUnprotector-net48
+          # .NET Framework derlemesi tamamen framework-dependent oldugundan (GAC'taki
+          # System.* derlemelerini kullanir) sadece .exe (ve varsa .exe.config) yeterlidir;
+          # ekstra bir "publish" veya self-contained adima gerek yoktur.
+          path: |
+            ${{ env.BUILD_OUTPUT }}/ExcelUnprotector.exe
+            ${{ env.BUILD_OUTPUT }}/ExcelUnprotector.exe.config
+          if-no-files-found: error
+
+      - name: Surum etiketiyse GitHub Release'e ekle
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ExcelUnprotector-slim.exe
-            ExcelUnprotector-portable.exe
+            ${{ env.BUILD_OUTPUT }}/ExcelUnprotector.exe
