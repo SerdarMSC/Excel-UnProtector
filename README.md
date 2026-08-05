@@ -1,7 +1,3 @@
-# Excel Unprotector
-
-**Coder:** SerdarMSC — [github.com/SerdarMSC](https://github.com/SerdarMSC/) · serdarmsc@gmail.com
-
 Excel `.xlsx` / `.xlsm` / `.xltx` / `.xltm` dosyalarındaki **çalışma kitabı (yapı) koruması**
 ve **sayfa korumalarını** kaldıran, C# (.NET Framework 4.8, WinForms) ile yazılmış bir masaüstü
 aracı. .NET Framework 4.8 bilinçli olarak seçildi: Windows 10/11'e zaten gömülü geldiğinden,
@@ -140,11 +136,3 @@ Bu, dosyaları doğrudan `.exe` simgesinin üzerine sürükleyip bırakarak da t
 - VBA proje şifresi ve dosya açma şifresi yukarıda açıklandığı gibi kapsam dışıdır.
 - Bu araç yalnızca *kilit/koruma bayraklarını* kaldırır; şifreyi "kırmaz" veya çözmez — zaten
   Excel'in koruma mekanizması şifreyi saklamadığı için buna gerek de yoktur.
-
-## Hakkında
-
-**Coder:** SerdarMSC
-**GitHub:** [https://github.com/SerdarMSC/](https://github.com/SerdarMSC/)
-**E-posta:** serdarmsc@gmail.com
-
-Uygulama içinde de bu bilgilere **"Hakkında"** düğmesinden ulaşılabilir.
