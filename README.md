@@ -1,7 +1,5 @@
 # Excel Unprotector
 
-**Coder:** SerdarMSC — [github.com/SerdarMSC](https://github.com/SerdarMSC/) · serdarmsc@gmail.com
-
 Excel `.xlsx` / `.xlsm` / `.xltx` / `.xltm` dosyalarındaki **çalışma kitabı (yapı) koruması**
 ve **sayfa korumalarını** kaldıran, C# (.NET 8, WinForms) ile yazılmış bir masaüstü aracı.
 
