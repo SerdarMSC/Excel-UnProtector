@@ -28,6 +28,7 @@
     <RepositoryUrl>https://github.com/SerdarMSC/</RepositoryUrl>
     <LangVersion>latest</LangVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!--

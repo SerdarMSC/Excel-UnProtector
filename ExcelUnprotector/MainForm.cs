@@ -30,6 +30,17 @@ public class MainForm : Form
         AllowDrop = true;
         Font = new Font("Segoe UI", 9F);
 
+        // Uygulama .exe'sine gomulu simgeyi (ApplicationIcon, AppIcon.ico) pencere/gorev
+        // cubugu simgesi olarak da kullan; ayrica bir kopya gommeye gerek kalmadan.
+        try
+        {
+            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        }
+        catch
+        {
+            // Simge cikarilamazsa (orn. bazi tasarim zamani senaryolari) varsayilan simgeyle devam et.
+        }
+
         BuildLayout();
         WireEvents();
     }
