@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- .NET Framework kullanmak isterseniz bu satırı örn. "net472" olarak değiştirebilirsiniz. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ExcelUnprotector</RootNamespace>
+    <AssemblyName>ExcelUnprotector</AssemblyName>
+    <AssemblyTitle>Excel Unprotector</AssemblyTitle>
+    <Product>Excel Unprotector</Product>
+    <Version>1.0.0</Version>
+    <Description>Excel (.xlsx/.xlsm/.xltx/.xltm) dosyalarindaki calisma kitabi ve sayfa korumalarini kaldirir.</Description>
+    <Authors>Serdar MSC</Authors>
+    <Company>Serdar MSC</Company>
+    <Copyright>Copyright (c) 2026 Serdar MSC</Copyright>
+    <PackageProjectUrl>https://github.com/SerdarMSC/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SerdarMSC/</RepositoryUrl>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+</Project>
