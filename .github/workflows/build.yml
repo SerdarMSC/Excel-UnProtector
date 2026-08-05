@@ -1,0 +1,67 @@
+name: Build Excel Unprotector
+
+# Ne zaman calisir:
+#  - main/master'a her push ve her pull request'te (derleme dogrulamasi)
+#  - "v1.0.0" gibi bir surum etiketi (tag) push edildiginde (ayrica GitHub Release'e .exe ekler)
+#  - Actions sekmesinden elle tetiklendiginde ("Run workflow")
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*.*.*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # tag push'ta Release olusturup dosya eklemek icin gerekli
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  PROJECT_PATH: "ExcelUnprotector/ExcelUnprotector.csproj"
+  # WinForms icin derleme, calistirmayi test etmeyecegimiz icin sadece windows-latest gerekiyor.
+
+jobs:
+  build:
+    name: Build & Publish
+    # WinForms uygulamasi oldugundan Windows runner sart.
+    runs-on: windows-latest
+
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v4
+
+      - name: .NET SDK kur
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Bagimliliklari geri yukle (restore)
+        run: dotnet restore "${{ env.PROJECT_PATH }}"
+
+      - name: Derle (Release)
+        run: dotnet build "${{ env.PROJECT_PATH }}" --configuration Release --no-restore
+
+      - name: Tek dosya, kendi kendine yetebilen .exe olustur (publish)
+        run: >
+          dotnet publish "${{ env.PROJECT_PATH }}"
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          --output publish
+
+      - name: Yayin ciktisini artifact olarak yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ExcelUnprotector-win-x64
+          path: publish/ExcelUnprotector.exe
+          if-no-files-found: error
+
+      - name: Surum etiketiyse GitHub Release'e ekle
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: publish/ExcelUnprotector.exe
