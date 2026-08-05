@@ -146,11 +146,3 @@ Bu, dosyaları doğrudan `.exe` simgesinin üzerine sürükleyip bırakarak da t
 - VBA proje şifresi ve dosya açma şifresi yukarıda açıklandığı gibi kapsam dışıdır.
 - Bu araç yalnızca *kilit/koruma bayraklarını* kaldırır; şifreyi "kırmaz" veya çözmez — zaten
   Excel'in koruma mekanizması şifreyi saklamadığı için buna gerek de yoktur.
-
-## Hakkında
-
-**Coder:** SerdarMSC
-**GitHub:** [https://github.com/SerdarMSC/](https://github.com/SerdarMSC/)
-**E-posta:** serdarmsc@gmail.com
-
-Uygulama içinde de bu bilgilere **"Hakkında"** düğmesinden ulaşılabilir.
