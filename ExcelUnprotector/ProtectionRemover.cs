@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -41,7 +45,7 @@ public static class ProtectionRemover
 
     public sealed class FileResult
     {
-        public string SourcePath { get; init; } = "";
+        public string SourcePath { get; set; } = "";
         public string? OutputPath { get; set; }
         public bool Success { get; set; }
         public string? ErrorMessage { get; set; }
@@ -182,7 +186,17 @@ public static class ProtectionRemover
             entryStream.CopyTo(memory);
             var bytes = memory.ToArray();
             hasBom = bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
-            text = new UTF8Encoding(false).GetString(hasBom ? bytes.AsSpan(3).ToArray() : bytes);
+
+            if (hasBom)
+            {
+                var withoutBom = new byte[bytes.Length - 3];
+                Array.Copy(bytes, 3, withoutBom, 0, withoutBom.Length);
+                text = new UTF8Encoding(false).GetString(withoutBom);
+            }
+            else
+            {
+                text = new UTF8Encoding(false).GetString(bytes);
+            }
         }
 
         var transformed = transform(text);

@@ -1,3 +1,6 @@
+using System;
+using System.Windows.Forms;
+
 namespace ExcelUnprotector;
 
 internal static class Program

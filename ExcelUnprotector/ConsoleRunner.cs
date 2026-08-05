@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.InteropServices;
+
 namespace ExcelUnprotector;
 
 /// <summary>
@@ -77,6 +80,6 @@ internal static class NativeMethods
 {
     internal const int ATTACH_PARENT_PROCESS = -1;
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+    [DllImport("kernel32.dll")]
     internal static extern bool AttachConsole(int dwProcessId);
 }

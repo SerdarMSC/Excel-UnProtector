@@ -2,11 +2,19 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <!-- .NET Framework kullanmak isterseniz bu satırı örn. "net472" olarak değiştirebilirsiniz. -->
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <!--
+      .NET Framework 4.8 kasten secildi: bu, Windows 7'den beri isletim sistemine gomulu
+      gelir (Windows 10/11'de zaten kurulu). Bu sayede kullanici hicbir ek "runtime" kurmak
+      zorunda kalmadan .exe'yi dogrudan calistirabilir - modern .NET (Core) 5/6/8 hedeflerinin
+      aksine, ayri bir "Desktop Runtime" kurulumu gerektirmez.
+      Not: SDK-style proje formati kullanildigi icin modern C# dil ozellikleri (orn. dosya
+      kapsamli namespace, target-typed new, init erisimcileri) derleyici tarafindan yine de
+      desteklenir; sadece calisma zamani kutuphanesi .NET Framework'un kendisidir.
+    -->
+    <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>ExcelUnprotector</RootNamespace>
     <AssemblyName>ExcelUnprotector</AssemblyName>
     <AssemblyTitle>Excel Unprotector</AssemblyTitle>
@@ -18,8 +26,19 @@
     <Copyright>Copyright (c) 2026 Serdar MSC</Copyright>
     <PackageProjectUrl>https://github.com/SerdarMSC/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SerdarMSC/</RepositoryUrl>
-    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
+
+  <!--
+    Onemli: SDK-style .NET Framework projelerinde (net48 gibi) sadece cekirdek derlemeler
+    (mscorlib, System, System.Core, System.Windows.Forms/System.Drawing UseWindowsForms
+    sayesinde) otomatik referans olarak eklenir. System.IO.Compression (ZipArchive,
+    ZipArchiveEntry, CompressionLevel icin) bu otomatik listede YOKTUR ve elle eklenmelidir;
+    aksi halde "The type or namespace 'ZipArchive' could not be found" hatasi alinir.
+  -->
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
 
 </Project>
