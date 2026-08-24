@@ -262,16 +262,40 @@ public class MainForm : Form
             MaximizeBox = false,
             MinimizeBox = false,
             ShowInTaskbar = false,
-            ClientSize = new Size(360, 190),
+            ClientSize = new Size(420, 380),
             Font = Font
         };
+
+        // Icon/Logo
+        var pictureBox = new PictureBox
+        {
+            SizeMode = PictureBoxSizeMode.StretchImage,
+            Location = new Point(16, 16),
+            Size = new Size(80, 80),
+            BackColor = Color.White
+        };
+
+        try
+        {
+            var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var exeDirectory = Path.GetDirectoryName(exePath) ?? ".";
+            var iconPath = Path.Combine(exeDirectory, "Unlock Excel Security Icon.png");
+            if (File.Exists(iconPath))
+                pictureBox.Image = Image.FromFile(iconPath);
+            else
+                pictureBox.Image = Icon.ExtractAssociatedIcon(Application.ExecutablePath)?.ToBitmap();
+        }
+        catch
+        {
+            // Hata oluşursa sessizce yut
+        }
 
         var title = new Label
         {
             Text = "Excel Unprotector",
-            Font = new Font(Font, FontStyle.Bold),
+            Font = new Font(Font, FontStyle.Bold | FontStyle.Underline, 14),
             AutoSize = true,
-            Location = new Point(16, 16)
+            Location = new Point(110, 16)
         };
 
         var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
@@ -280,30 +304,61 @@ public class MainForm : Form
             Text = $"Sürüm {version?.ToString(3) ?? "1.0.0"}",
             AutoSize = true,
             ForeColor = SystemColors.GrayText,
-            Location = new Point(16, 40)
+            Location = new Point(110, 45)
+        };
+
+        var descriptionLabel = new Label
+        {
+            Text = "Excel (.xlsx / .xlsm / .xltx / .xltm) dosyalarındaki\nçalışma kitabı (yapı) koruması ve sayfa korumalarını kaldıran\nmasaüstü aracı.",
+            AutoSize = true,
+            Location = new Point(16, 110),
+            MaximumSize = new Size(390, 100)
+        };
+
+        var separatorPanel = new Panel
+        {
+            Location = new Point(16, 175),
+            Size = new Size(388, 1),
+            BackColor = SystemColors.ControlLight
+        };
+
+        var featuresLabel = new Label
+        {
+            Text = "Kaldırılan Korumalar:",
+            Font = new Font(Font, FontStyle.Bold),
+            AutoSize = true,
+            Location = new Point(16, 195)
+        };
+
+        var featuresList = new Label
+        {
+            Text = "✓ Çalışma kitabı (yapı) koruması\n✓ Sayfa koruması (şifreli/şifresiz)\n✓ Korumalı hücre aralıkları",
+            AutoSize = true,
+            Location = new Point(30, 220)
         };
 
         var coderLabel = new Label
         {
             Text = "Coder: SerdarMSC",
+            Font = new Font(Font, FontStyle.Bold),
             AutoSize = true,
-            Location = new Point(16, 70)
+            Location = new Point(16, 285)
         };
 
         var githubLink = new LinkLabel
         {
-            Text = "https://github.com/SerdarMSC/",
+            Text = "https://github.com/SerdarMSC/Excel-UnProtector",
             AutoSize = true,
-            Location = new Point(16, 94)
+            Location = new Point(16, 310)
         };
         githubLink.Links.Add(0, githubLink.Text.Length, githubLink.Text);
-        githubLink.LinkClicked += (_, _) => OpenUrl(githubLink.Text);
+        githubLink.LinkClicked += (_, _) => OpenUrl("https://github.com/SerdarMSC/Excel-UnProtector");
 
         var emailLink = new LinkLabel
         {
             Text = "serdarmsc@gmail.com",
             AutoSize = true,
-            Location = new Point(16, 118)
+            Location = new Point(16, 335)
         };
         emailLink.Links.Add(0, emailLink.Text.Length, emailLink.Text);
         emailLink.LinkClicked += (_, _) => OpenUrl($"mailto:{emailLink.Text}");
@@ -312,12 +367,17 @@ public class MainForm : Form
         {
             Text = "Kapat",
             DialogResult = DialogResult.OK,
-            Location = new Point(266, 148),
+            Location = new Point(324, 350),
             Size = new Size(80, 28)
         };
 
+        about.Controls.Add(pictureBox);
         about.Controls.Add(title);
         about.Controls.Add(versionLabel);
+        about.Controls.Add(descriptionLabel);
+        about.Controls.Add(separatorPanel);
+        about.Controls.Add(featuresLabel);
+        about.Controls.Add(featuresList);
         about.Controls.Add(coderLabel);
         about.Controls.Add(githubLink);
         about.Controls.Add(emailLink);
