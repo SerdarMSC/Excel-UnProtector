@@ -1,4 +1,4 @@
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/2b74bbc5-72a6-4adc-8731-d2a6bab7b748" />
+<img width="1024" height="1024" alt="image" src="https://raw.githubusercontent.com/SerdarMSC/Excel-UnProtector/refs/heads/main/ExcelUnprotector/Unlock%20Excel%20Security%20Icon.png" />
 
 
 Excel `.xlsx` / `.xlsm` / `.xltx` / `.xltm` dosyalarındaki **çalışma kitabı (yapı) koruması**
