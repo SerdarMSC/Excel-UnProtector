@@ -6,7 +6,7 @@ namespace ExcelUnprotector;
 
 /// <summary>
 /// Uygulama başlangıcında gösterilen splash screen.
-/// "Unlock Excel Security Icon.png" görselini ve uygulama bilgisini gösterir.
+/// "Unlock Excel Security Icon.png" görselini (embedded resource) ve uygulama bilgisini gösterir.
 /// </summary>
 public class SplashScreen : Form
 {
@@ -116,18 +116,17 @@ public class SplashScreen : Form
     {
         try
         {
-            // Uygulamanın kurulu olduğu dizinde "Unlock Excel Security Icon.png" bul
-            var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            var exeDirectory = System.IO.Path.GetDirectoryName(exePath) ?? ".";
-            var iconPath = System.IO.Path.Combine(exeDirectory, "Unlock Excel Security Icon.png");
-
-            if (System.IO.File.Exists(iconPath))
+            // Embedded resource'dan resim yükle
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("ExcelUnprotector.Unlock Excel Security Icon.png");
+            
+            if (stream != null)
             {
-                _pictureBox.Image = Image.FromFile(iconPath);
+                _pictureBox.Image = Image.FromStream(stream);
             }
             else
             {
-                // Dosya bulunamazsa, fallback olarak uygulamanın ikonunu kullan
+                // Fallback: uygulamanın ikonunu kullan
                 _pictureBox.Image = Icon.ExtractAssociatedIcon(Application.ExecutablePath)?.ToBitmap();
             }
         }
