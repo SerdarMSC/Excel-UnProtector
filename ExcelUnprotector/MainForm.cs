@@ -242,7 +242,7 @@ public class MainForm : Form
         _btnProcess.Enabled = true;
 
         MessageBox.Show(this,
-            $"İşlem tamamlandı.\n\nBaşarılı: {successCount}\nHatalı: {failCount}\n\nÇıktı dosyaları, kaynak dosyalarla aynı klasörde \"_unprotected\" ekiyle oluşturuldu.",
+            $"İşlem tamamlandı.\n\nBaşarılı: {successCount}\nHatalı: {failCount}\n\n��ıktı dosyaları, kaynak dosyalarla aynı klasörde \"_unprotected\" ekiyle oluşturuldu.",
             "Excel Unprotector", MessageBoxButtons.OK,
             failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
     }
@@ -293,7 +293,7 @@ public class MainForm : Form
         var title = new Label
         {
             Text = "Excel Unprotector",
-            Font = new Font(Font, FontStyle.Bold | FontStyle.Underline, 14),
+            Font = new Font(Font.FontFamily, 14, FontStyle.Bold | FontStyle.Underline),
             AutoSize = true,
             Location = new Point(110, 16)
         };
