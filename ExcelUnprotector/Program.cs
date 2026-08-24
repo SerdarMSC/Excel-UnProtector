@@ -9,7 +9,7 @@ internal static class Program
     /// Uygulamanin ana giris noktasi.
     /// Komut satiri argumani olarak dosya yolu(lari) verilirse konsol modunda calisir
     /// (orn. dosyalari Explorer'dan surukleyip .exe uzerine birakmak, ya da toplu betikten
-    /// cagirmak icin). Argument verilmezse normal WinForms arayuzu acilir.
+    /// cagirmak icin). Argument verilmezse splash screen'i gosterip normal WinForms arayuzu acilir.
     /// </summary>
     [STAThread]
     private static void Main(string[] args)
@@ -21,6 +21,11 @@ internal static class Program
         }
 
         ApplicationConfiguration();
+
+        // Splash screen'i goster ve uygulamayi baslat
+        using var splash = new SplashScreen();
+        splash.ShowWithDelay(2500);
+
         Application.Run(new MainForm());
     }
 
