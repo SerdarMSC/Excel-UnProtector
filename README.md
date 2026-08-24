@@ -1,3 +1,6 @@
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/2b74bbc5-72a6-4adc-8731-d2a6bab7b748" />
+
+
 Excel `.xlsx` / `.xlsm` / `.xltx` / `.xltm` dosyalarındaki **çalışma kitabı (yapı) koruması**
 ve **sayfa korumalarını** kaldıran, C# (.NET Framework 4.8, WinForms) ile yazılmış bir masaüstü
 aracı. .NET Framework 4.8 bilinçli olarak seçildi: Windows 10/11'e zaten gömülü geldiğinden,
