@@ -347,12 +347,12 @@ public class MainForm : Form
 
         var githubLink = new LinkLabel
         {
-            Text = "https://github.com/SerdarMSC/Excel-UnProtector",
+            Text = "https://github.com/SerdarMSC?tab=repositories",
             AutoSize = true,
             Location = new Point(16, 310)
         };
         githubLink.Links.Add(0, githubLink.Text.Length, githubLink.Text);
-        githubLink.LinkClicked += (_, _) => OpenUrl("https://github.com/SerdarMSC/Excel-UnProtector");
+        githubLink.LinkClicked += (_, _) => OpenUrl("https://github.com/SerdarMSC?tab=repositories");
 
         var emailLink = new LinkLabel
         {
