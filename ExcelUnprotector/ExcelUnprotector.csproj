@@ -42,4 +42,9 @@
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
+  <!-- Embed icon image as a resource in the assembly -->
+  <ItemGroup>
+    <EmbeddedResource Include="Unlock Excel Security Icon.png" />
+  </ItemGroup>
+
 </Project>
