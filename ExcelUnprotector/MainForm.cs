@@ -242,7 +242,7 @@ public class MainForm : Form
         _btnProcess.Enabled = true;
 
         MessageBox.Show(this,
-            $"İşlem tamamlandı.\n\nBaşarılı: {successCount}\nHatalı: {failCount}\n\n��ıktı dosyaları, kaynak dosyalarla aynı klasörde \"_unprotected\" ekiyle oluşturuldu.",
+            $"İşlem tamamlandı.\n\nBaşarılı: {successCount}\nHatalı: {failCount}\n\nÇıktı dosyaları, kaynak dosyalarla aynı klasörde \"_unprotected\" ekiyle oluşturuldu.",
             "Excel Unprotector", MessageBoxButtons.OK,
             failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
     }
@@ -277,13 +277,19 @@ public class MainForm : Form
 
         try
         {
-            var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            var exeDirectory = Path.GetDirectoryName(exePath) ?? ".";
-            var iconPath = Path.Combine(exeDirectory, "Unlock Excel Security Icon.png");
-            if (File.Exists(iconPath))
-                pictureBox.Image = Image.FromFile(iconPath);
+            // Embedded resource'dan resim yükle
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("ExcelUnprotector.Unlock Excel Security Icon.png");
+            
+            if (stream != null)
+            {
+                pictureBox.Image = Image.FromStream(stream);
+            }
             else
+            {
+                // Fallback: uygulamanın ikonunu kullan
                 pictureBox.Image = Icon.ExtractAssociatedIcon(Application.ExecutablePath)?.ToBitmap();
+            }
         }
         catch
         {
@@ -347,12 +353,12 @@ public class MainForm : Form
 
         var githubLink = new LinkLabel
         {
-            Text = "https://github.com/SerdarMSC?tab=repositories",
+            Text = "https://github.com/SerdarMSC/Excel-UnProtector",
             AutoSize = true,
             Location = new Point(16, 310)
         };
         githubLink.Links.Add(0, githubLink.Text.Length, githubLink.Text);
-        githubLink.LinkClicked += (_, _) => OpenUrl("https://github.com/SerdarMSC?tab=repositories");
+        githubLink.LinkClicked += (_, _) => OpenUrl("https://github.com/SerdarMSC/Excel-UnProtector");
 
         var emailLink = new LinkLabel
         {
